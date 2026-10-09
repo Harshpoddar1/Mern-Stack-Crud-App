@@ -58,7 +58,7 @@ router.put('/:id', async (req, res) => {
 // @access  Public
 router.delete('/:id', async (req, res) => {
   try {
-    const removeStudent = await Students.findByIdAndRemove(req.params.id);
+    const removeStudent = await Students.findByIdAndDelete(req.params.id);
      res.send({ message: 'The student was removed' });
   } catch(err) {
     res.status(400).send({ error: err });

@@ -1,0 +1,24 @@
+services:
+  mern-backend:
+    build: ./
+    expose:
+      - "5000"
+    environment:
+      - MONGO_URI=${MONGO_URI}
+    depends_on:
+      - mongo-db
+
+  mongo-db:
+    image: mongo:7.0
+    volumes:
+      - mongo-data:/data/db
+
+  mern-client:
+    build: ./client
+    ports:
+      - "8080:80"
+    depends_on:
+      - mern-backend
+volumes:
+  mongo-data:
+
