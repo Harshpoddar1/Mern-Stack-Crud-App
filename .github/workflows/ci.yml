@@ -18,5 +18,12 @@ jobs:
           node-version: 24
       - name: Packages install
         run:  npm ci
-      - name: Npm audit
+      - name: Backend audit
+        run:  npm audit --omit=dev --audit-level=high
+      - name: Client packages install                  #--------- client.
+        working-directory: client
+        run:  npm ci
+      - name: client audit
+        working-directory: client
+        continue-on-error: true
         run:  npm audit --omit=dev --audit-level=high
