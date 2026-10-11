@@ -22,7 +22,7 @@ jobs:
         run:  npm audit --omit=dev --audit-level=high
       - name: Client packages install                  #--------- client.
         working-directory: client
-        run:  npm ci
+        run:  npm ci --legacy-peer-deps
       - name: client audit
         working-directory: client
         continue-on-error: true
