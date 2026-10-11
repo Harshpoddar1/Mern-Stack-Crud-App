@@ -1,1 +1,22 @@
-h
+name: MERN DevsecOps CI
+
+on:
+  push:
+    branches:
+       - master
+
+jobs:
+  dependency-audit:                 #--------- jobs name.
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code checkout to runner
+        uses: actions/checkout@v5
+      - name: Node setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Packages install
+        run:  npm ci
+      - name: Npm audit
+        run:  npm audit --omit=dev --audit-level=high
