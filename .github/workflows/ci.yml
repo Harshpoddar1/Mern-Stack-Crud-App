@@ -6,7 +6,7 @@ on:
        - master
 
 jobs:
-  dependency-audit:                 #--------- jobs name.
+  dependency-audit:  #----------jobs name.
     runs-on: ubuntu-latest
 
     steps:
@@ -20,10 +20,48 @@ jobs:
         run:  npm ci
       - name: Backend audit
         run:  npm audit --omit=dev --audit-level=high
-      - name: Client packages install                  #--------- client.
+      - name: Client packages install  #----------client.
         working-directory: client
         run:  npm ci --legacy-peer-deps
       - name: client audit
         working-directory: client
         continue-on-error: true
         run:  npm audit --omit=dev --audit-level=high
+
+  build-and-scan:  # ----------New jobs name
+    needs: dependency-audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code checkout to runner
+        uses: actions/checkout@v5
+      - name: Backend build and check  # ----------backend
+        run:  docker build -t mern-backend:ci .
+      - name: Trivy scan backend - visibility
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: mern-backend:ci
+          severity:  'CRITICAL,HIGH'
+          exit-code: '0'
+      - name: Trivy scan backend - gate
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: mern-backend:ci
+          severity:  'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: '1'
+      - name: Client build and check  # ----------client
+        run:  docker build -t mern-client:ci ./client
+      - name: Trivy scan client - visibility
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: mern-client:ci
+          severity:  'CRITICAL,HIGH'
+          exit-code: '0'
+      - name: Trivy scan client - gate
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: mern-client:ci
+          severity:  'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: '1'
