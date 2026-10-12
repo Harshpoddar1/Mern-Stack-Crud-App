@@ -4,7 +4,9 @@ WORKDIR /app
 
 COPY package*.json .
 
-RUN npm install
+RUN npm ci --omit=dev
+
+RUN rm -rf /usr/local/lib/node_modules/npm && rm -rf /usr/local/bin/npm && rm -rf /usr/local/bin/npx
 
 COPY . .
 
