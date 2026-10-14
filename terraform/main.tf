@@ -13,6 +13,10 @@ resource "aws_instance" "mern" {
   key_name               = "devops-key"
   vpc_security_group_ids = [aws_security_group.mern_sg.id]
 
+  root_block_device {
+    volume_size = 20
+  }
+
   user_data = <<-EOF
     #!/bin/bash
     apt-get update -y
