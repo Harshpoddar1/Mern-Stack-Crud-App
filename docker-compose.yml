@@ -19,6 +19,16 @@ services:
       - "80:80"
     depends_on:
       - mern-backend
+
+  uptime_kuma:
+    image: louislam/uptime-kuma:1
+    ports:
+      - "3001:3001"
+    volumes:
+      - utk_data:/app/data
+    restart: unless-stopped
+
 volumes:
   mongo-data:
+  utk_data:
 
