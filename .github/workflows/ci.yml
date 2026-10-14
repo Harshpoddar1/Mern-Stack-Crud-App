@@ -65,3 +65,25 @@ jobs:
           severity:  'CRITICAL,HIGH'
           ignore-unfixed: true
           exit-code: '1'
+  deploy:
+    needs: build-and-scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
+          script: |
+            if [ ! -d Mern-Stack-Crud-App ]; then  # ------------ if aggar !(not) -d(directory) Mern-Stack-Crud-App nhi hoga too hi clone chalega.
+              git clone https://github.com/Harshpoddar1/Mern-Stack-Crud-App.git
+            fi
+            cd Mern-Stack-Crud-App
+            git pull origin master
+            cat > .env << EOF
+            MONGO_URI=${{ secrets.MONGO_URI }}
+            EOF
+            docker compose up --build -d
