@@ -23,6 +23,11 @@ resource "aws_instance" "mern" {
     apt-get install -y docker.io docker-compose-v2
     systemctl enable --now docker
     usermod -aG docker ubuntu
+    fallocate -l 1G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
   EOF
 }
 
@@ -45,7 +50,7 @@ resource "aws_security_group" "mern_sg" {
     from_port   = 3001
     to_port     = 3001
     protocol    = "tcp"
-    cidr_blocks = ["106.219.227.47/32"]
+    cidr_blocks = ["223.237.14.68/32"]
   }
   egress {
     from_port   = 0
